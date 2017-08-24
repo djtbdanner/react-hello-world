@@ -14,13 +14,26 @@ var GreeterMessage = React.createClass({
 });
 
 var GreeterForm = React.createClass({
-  onFormSubmit: function (e){
+  onFormSubmit: function(e) {
     e.preventDefault();
     var name = this.refs.nameBox.value;
-    if (name.length > 0){
-      this.refs.nameBox.value = '';
-      this.props.onNewName(name);
+    var message = this.refs.textBox.value;
+
+    var update = {
+      name: '',
+      message: ''
     }
+
+    if (name.length > 0) {
+      this.refs.nameBox.value = '';
+      update.name = name;
+    }
+    if (message.length > 0) {
+      this.refs.textBox.value = '';
+      update.message = message;
+    }
+    this.props.onNewData(update);
+
   },
 
   render: function() {
@@ -29,8 +42,15 @@ var GreeterForm = React.createClass({
 
     return (
       <form onSubmit={this.onFormSubmit}>
-        <input type="text" ref="nameBox"></input>
-        <button>Set Name</button>
+        <div>
+          <input type="text" ref="nameBox" placeholder="Enter Name"></input>
+        </div>
+        <div>
+          <textarea ref="textBox" placeholder="Enter Message"/>
+        </div>
+        <div>
+          <button>Submit</button>
+        </div>
       </form>
     );
   }
@@ -39,26 +59,21 @@ var GreeterForm = React.createClass({
 
 var Greeter = React.createClass({
   getDefaultProps: function() {
-    return {
-      name: 'Default',
-      message: 'This is from a component as a variable.'
-    }
+    return {name: 'Default', message: 'This is from a component as a variable.'}
   },
- getInitialState: function() {
-    return {name: this.props.name};
+  getInitialState: function() {
+    return {name: this.props.name, message: this.props.message};
   },
-  handleNewName: function(name){
-    this.setState({
-      name: name
-    });
+  handleNewData: function(update) {
+    this.setState({name: update.name, message: update.message});
   },
   render: function() {
     var name = this.state.name;
-    var message = this.props.message;
+    var message = this.state.message;
     return (
       <div>
         <GreeterMessage name={name} message={message}/>
-        <GreeterForm onNewName={this.handleNewName}/>
+        <GreeterForm onNewData={this.handleNewData}/>
       </div>
     );
   }
